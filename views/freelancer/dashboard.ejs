@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Freelancer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/styles.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container-fluid">
+    <header class="d-flex justify-content-center py-3 border-bottom mb-4">
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+        <li class="nav-item"><a href="/freelancer/browse-jobs" class="nav-link">Browse Jobs</a></li>
+        <li class="nav-item"><a href="/freelancer/profile" class="nav-link">Edit Profile</a></li>
+        <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+      </ul>
+    </header>
+  </div>
+
+  <main class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="dashboard-title">Welcome, <%= currentUser.name %>!</h1>
+            <a href="/view-chats" class="btn btn-primary">View Inbox</a>
+          </div>
+    <!-- Applied Jobs -->
+    <section class="mb-5">
+      <h3 class="mb-3">📝 Applied Jobs</h3>
+      <% if (applications.length === 0) { %>
+        <p>No applications submitted yet.</p>
+      <% } else { %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Employer</th>
+              <th>Description</th>
+              <th>Budget</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% applications.forEach(app => { %>
+              <tr>
+                <td class="text-capitalize"><%= app.job_title %></td>
+                <td><%= app.employer_name %></td>
+                <td><%= app.description %></td>
+                <td>$<%= app.budget %></td>
+                <td><span class="badge bg-secondary"><%= app.app_status %></span></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
+    <!-- Reviews -->
+    <section class="mb-5">
+      <h3 class="mb-3">⭐ Reviews Received</h3>
+      <% if (reviews.length === 0) { %>
+        <p>No reviews yet.</p>
+      <% } else { %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Rating</th>
+              <th>Feedback</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% reviews.forEach(r => { %>
+              <tr>
+                <td><%= r.job_title %></td>
+                <td><%= r.rating %>/5</td>
+                <td><%= r.feedback %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+
+    <!-- Payments -->
+    <section class="mb-5">
+      <h3 class="mb-3">💰 Payments</h3>
+      <% if (payments.length === 0) { %>
+        <p>No payments received yet.</p>
+      <% } else { %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Job Title</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% payments.forEach(p => { %>
+              <tr>
+                <td><%= p.job_title %></td>
+                <td>$<%= p.amount %></td>
+                <td><span class="badge bg-success"><%= p.pay_status %></span></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </section>
+  </main>
+</body>
+</html>

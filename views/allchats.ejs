@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <title>Inbox</title>
+    <style>
+        h2 {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    font-size: 2rem;
+  }
+
+  .main-div {
+    display: flex;
+    justify-content: center;
+  }
+
+  .inside-div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 650px;
+  }
+
+  .card {
+    width: 100%;
+    border: none;
+    border-radius: 16px;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f9f9f9, #ffffff);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+    color: #2c3e50;
+  }
+
+  .card-subtitle {
+    font-weight: 500;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: #6c757d;
+  }
+
+  .card-text {
+    font-size: 1rem;
+    color: #343a40;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .card-link {
+    font-weight: 500;
+    color: #0d6efd;
+    text-decoration: none;
+    margin-right: 1rem;
+  }
+
+  .card-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 576px) {
+    .inside-div {
+      padding: 0 1rem;
+    }
+  }
+    </style>
+</head>
+<body>
+    <div class="container" >
+        <header class="d-flex justify-content-center py-3">
+          <ul class="nav nav-pills">
+            <li class="nav-item"><a href='/' class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/employer/dashboard" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+          </ul>
+        </header>
+      </div>
+    <h2>Inbox</h2>
+    <div class="main-div">
+        <div class="inside-div">
+            <% if (msgs.length>0) { %>
+                <% for (let msg of msgs) { %>
+                    <div class="card" >
+                        <div class="card-body">
+                            <h5 class="card-title"><b>From:</b>&nbsp;<%= msg.sender_name %></h5>
+                            <br>
+                            <h6 class="card-subtitle mb-2 text-body-secondary"><b>To:</b>&nbsp;<%= msg.receiver_name %></h6>
+                            <br>
+                            <p class="card-text" style="font-size: larger;"><%= msg.message %></p>
+
+                            <% if (currentUser.id === msg.sender_id) { %>
+                                <!-- Sent by current user: show Edit and Delete -->
+                                <a href="/edit/<%= msg.msg_id %>" class="card-link">Edit</a>
+                                <a href="/delete/<%= msg.msg_id %>" class="card-link">Delete</a>
+                            <% } %>
+
+                            <% if (currentUser.id === msg.reciever_id) { %>
+                                <!-- Received by current user: show Reply -->
+                                <% if (currentUser.role === 'Employer') { %>
+                                    <!-- Employer replying to sender -->
+                                    <a href="/employer/new-chat/<%= msg.sender_id %>" class="card-link">Reply</a>
+                                <% } else { %>
+                                    <!-- Freelancer replying to sender -->
+                                    <a href="/freelancer/new-chat/<%= msg.sender_id %>" class="card-link">Reply</a>
+                                <% } %>
+                            <% } %>
+
+                        </div>
+                    </div>
+                <% } %>
+            <% } else { %>
+                <h4>Nothing in Inbox yet!</h4>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

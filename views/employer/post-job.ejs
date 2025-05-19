@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post a Job</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link href="/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container" >
+        <header class="d-flex justify-content-center py-3">
+          <ul class="nav nav-pills">
+            <li class="nav-item"><a href='/' class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/employer/dashboard" class="nav-link">Dashboard</a></li>
+            <li class="nav-item"><a href="/logout" class="nav-link">Logout</a></li>
+          </ul>
+        </header>
+      </div>
+      <div class="outer-div">
+        <div class="emp-form-content card p-4 shadow-sm">
+        <form method="POST" action="/employer/post-job">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control form-control-lg" id="title" placeholder="Enter Job Title" name="title">
+          </div>
+          <br>
+          <div class="mb-3">
+            <label for="desc" class="form-label">Description</label>
+            <textarea class="form-control" id="desc" placeholder="Enter Job Description" name="description"></textarea>
+          </div>
+          <br>
+          <label for="budget" class="form-label">Budget</label>
+          <input type="number" id="budget" class="form-control" name="budget" placeholder="Enter Job Budget">
+          <br>
+          <br>
+          <form>
+          <button type="submit" class="btn btn-primary" id="submit-button">Submit</button>
+        </form>
+        </form>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+</body>
+</html>
