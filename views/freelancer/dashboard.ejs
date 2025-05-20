@@ -48,6 +48,11 @@
                 <td><%= app.description %></td>
                 <td>$<%= app.budget %></td>
                 <td><span class="badge bg-secondary"><%= app.app_status %></span></td>
+                <td>
+                  <form method="GET" action="/freelancer/new-chat/<%= app.employer_id %>">
+                  <button type="submit" class="btn btn-primary">Chat</button>
+                </form>
+                </td>
               </tr>
             <% }) %>
           </tbody>

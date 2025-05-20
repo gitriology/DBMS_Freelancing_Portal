@@ -501,8 +501,7 @@ WHERE payments.freelancer_id = ? AND payments.pay_status = 'Completed';
                 if (err) return res.status(500).send("Error fetching recieved_payments");
                 connection.query(user_q, [freelancerId], (err, result) => {
                     if (err) return res.status(500).send("Error fetching name");
-                    const name = result[0]?.name;  
-                    console.log(name);
+                    const name = result[0]?.name;
                     res.render("freelancer/dashboard.ejs", { applications, reviews, payments, name });
                 });
 
