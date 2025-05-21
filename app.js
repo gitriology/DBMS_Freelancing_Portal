@@ -360,18 +360,23 @@ app.get("/employer/update-job/:job_id",(req,res)=>{
     })
 })
 
-app.post("/employer/update-job/:job_id",(req,res)=>{
-    const jobId=req.params.job_id;
-    let {title,description,budget}=req.body;
-    const q=`update jobs set title='${title}',description='${description}',budget='${budget}' where job_id='${jobId}';`;
-    connection.query(q,(err,result)=>{
-        if(err){
+app.post("/employer/update-job/:job_id", (req, res) => {
+    const jobId = req.params.job_id;
+    let { title, description, budget } = req.body;
+
+    const q = `UPDATE jobs SET title = ?, description = ?, budget = ? WHERE job_id = ?`;
+    const values = [title, description, budget, jobId];
+
+    connection.query(q, values, (err, result) => {
+        if (err) {
             console.log(err);
-            res.status(500).send("Error");
+            if (!res.headersSent) return res.status(500).send("Error");
+            return;
         }
-        res.redirect("/employer/dashboard");
-    })
-})
+        if (!res.headersSent) res.redirect("/employer/dashboard");
+    });
+});
+
 
 //delete job
 app.get("/employer/delete-job/:job_id",(req,res)=>{
@@ -391,21 +396,22 @@ app.get("/employer/post-job",isEmployer,(req,res)=>{
     res.render("employer/post-job.ejs");
 })
 
-app.post("/employer/post-job",isEmployer,(req,res)=>{
-    let {title,description,budget}=req.body;
-    let job_id=uuidv4();
-    let emp_id=req.session.user.id;
-    const q=`insert into jobs (job_id,title,description,budget,employer_id) values ('${job_id}','${title}','${description}',${budget},'${emp_id}');`;
-    connection.query(q,(err,result)=>{
-        if(err){
-            console.log("Error occured");
-            res.status(500).send("Error")
+app.post("/employer/post-job", isEmployer, (req, res) => {
+    let { title, description, budget } = req.body;
+    let job_id = uuidv4();
+    let emp_id = req.session.user.id;
+
+    const q = `INSERT INTO jobs (job_id, title, description, budget, employer_id) VALUES (?, ?, ?, ?, ?)`;
+    const values = [job_id, title, description, budget, emp_id];
+
+    connection.query(q, values, (err, result) => {
+        if (err) {
+            console.log("Error occurred", err);
+            return res.status(500).send("Error");
         }
-        else{
-            res.redirect("/employer/dashboard");
-        }
-    })
-})
+        res.redirect("/employer/dashboard");
+    });
+});
 
 //employer settings
 app.get("/employer/settings",isEmployer,(req,res)=>{

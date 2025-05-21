@@ -49,9 +49,18 @@
     <li class="list-group-item"><b>Title:</b> &nbsp; &nbsp;&nbsp;&nbsp;<%= freelancer_data.title %></li>
     <li class="list-group-item"><b>Skills:</b> &nbsp; &nbsp;&nbsp;&nbsp;<%= freelancer_data.skills %></li>
     <li class="list-group-item"><b>Bio:</b> &nbsp; &nbsp;&nbsp;&nbsp;<%= freelancer_data.bio %></li>
-    <li class="list-group-item"><b>Completed Jobs:</b> &nbsp; &nbsp;&nbsp;&nbsp;<%= job_count.total_job_count %></li>
-    <li class="list-group-item"><b>Total Earnings:</b> &nbsp; &nbsp;&nbsp;&nbsp;$<%= earnings.total_earnings %></li>
-    <li class="list-group-item"><b>Average Rating:</b> &nbsp; &nbsp;&nbsp;&nbsp;<%= parseFloat(rating.average_rating) %></li>
+   <% if (job_count.total_job_count > 0) { %>
+    <li class="list-group-item"><b>Completed Jobs:</b> &nbsp;&nbsp;&nbsp;<%= job_count.total_job_count %></li>
+<% } %>
+
+<% if (earnings.total_earnings > 0) { %>
+    <li class="list-group-item"><b>Total Earnings:</b> &nbsp;&nbsp;&nbsp;$<%= earnings.total_earnings %></li>
+<% } %>
+
+<% if (rating.average_rating > 0) { %>
+    <li class="list-group-item"><b>Average Rating:</b> &nbsp;&nbsp;&nbsp;<%= parseFloat(rating.average_rating).toFixed(1) %></li>
+<% } %>
+
     <% if(jobs_hist.length>0) { %>
     <li class="list-group-item"><b>Jobs History:</b> &nbsp; &nbsp;&nbsp;&nbsp; 
       <% for (let job of jobs_hist) { %>
