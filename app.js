@@ -17,18 +17,13 @@ app.use(express.json())
 const bcrypt=require('bcrypt');
 const saltRounds=10;
 
-const mysql = require('mysql2');
-
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,       // use environment variable, NOT 'localhost'
-  user: process.env.DB_USER,       // from PlanetScale dashboard
-  password: process.env.DB_PASSWORD, // from PlanetScale dashboard
-  database: process.env.DB_NAME,   // your PlanetScale database name
-  ssl: {
-    rejectUnauthorized: true       // enforce SSL cert validation
-  }
-});
-
+const mysql=require('mysql2');
+const connection=mysql.createConnection({
+    host:'localhost',
+    user:'root',
+    database:'dbms_freelancing',
+    password:process.env.db_password
+})
 
 app.use(session({
     secret: process.env.session_secret,
