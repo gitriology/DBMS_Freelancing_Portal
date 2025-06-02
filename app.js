@@ -328,7 +328,7 @@ app.get("/employer/accept-application/:app_id",(req,res)=>{
     connection.query(q,(err,result)=>{
         if(err){
             console.log(err);
-            return res.status(500).send("Error");
+            return res.status(500).send(err);
         }
         res.redirect("/employer/dashboard");
     })
@@ -341,7 +341,7 @@ app.get("/employer/decline-application/:app_id",(req,res)=>{
     connection.query(q,(err,result)=>{
         if(err){
             console.log(err);
-            return res.status(500).send("Error");
+            return res.status(500).send(err);
         }
         res.redirect("/employer/dashboard");
     })
