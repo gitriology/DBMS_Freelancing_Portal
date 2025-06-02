@@ -19,9 +19,9 @@ const saltRounds=10;
 
 const mysql=require('mysql2');
 const connection=mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    database:'dbms_freelancing',
+    host:process.env.db_host,
+    user:process.env.db_user,
+    database:process.env.db_name,
     password:process.env.db_password
 })
 
@@ -34,7 +34,7 @@ app.use(session({
 
 const {v4: uuidv4}=require('uuid');
 
-const port=8080
+const port=3306
 
 function isEmployer(req, res, next) {
     if (req.session.user && req.session.user.role === "Employer") {
