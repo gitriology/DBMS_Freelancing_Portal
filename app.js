@@ -517,75 +517,92 @@ WHERE payments.freelancer_id = ? AND payments.pay_status = 'Completed';
 });
 
 //get profile for freelancer
-app.get("/freelancer/get_profile/:id",isEmployer,(req,res)=>{
-   const freelancerId=req.params.id;
-    // Query to get Name, Email, Title, Skills, Bio
-    const userQuery = `SELECT name, email,user_id FROM users WHERE user_id = ?`;
-    const freelancerQuery = `SELECT f.title, f.skills, f.bio
-    FROM freelancers f
-    WHERE f.freelancer_id = ?;`;
+app.get("/freelancer/get_profile/:id", isEmployer, (req, res) => {
+  const freelancerId = req.params.id;
 
-    // Query to get Completed Jobs Count
-    const completedJobsQuery = `
-       SELECT Count(*) as total_job_count
+  const userQuery = `SELECT name, email, user_id FROM users WHERE user_id = ?`;
+  const freelancerQuery = `SELECT f.title, f.skills, f.bio FROM freelancers f WHERE f.freelancer_id = ?;`;
+  const completedJobsQuery = `
+    SELECT COUNT(*) AS total_job_count
     FROM jobs j
     JOIN applications a ON j.job_id = a.job_id
     WHERE a.freelancer_id = ? AND a.app_status = 'Accepted' AND j.job_status = 'Closed';
-    `;
-
-    // Query to get Total Earnings
-    const totalEarningsQuery = `SELECT SUM(p.amount) AS total_earnings
+  `;
+  const totalEarningsQuery = `
+    SELECT SUM(p.amount) AS total_earnings
     FROM payments p
     JOIN jobs j ON p.job_id = j.job_id
-    WHERE p.freelancer_id = ? AND p.pay_status = 'Completed' AND j.job_status = 'Closed';`;
-
-    // Query to get Average Rating
-    const averageRatingQuery = `SELECT AVG(r.rating) AS average_rating
+    WHERE p.freelancer_id = ? AND p.pay_status = 'Completed' AND j.job_status = 'Closed';
+  `;
+  const averageRatingQuery = `
+    SELECT AVG(r.rating) AS average_rating
     FROM reviews r
     JOIN jobs j ON r.job_id = j.job_id
-    WHERE r.freelancer_id = ? AND j.job_status = 'Closed'`;
+    WHERE r.freelancer_id = ? AND j.job_status = 'Closed';
+  `;
+  const jobHistoryQuery = `
+    SELECT j.title AS job_title, j.budget, r.feedback AS review
+    FROM jobs j
+    INNER JOIN applications a ON j.job_id = a.job_id
+    INNER JOIN reviews r ON r.job_id = j.job_id AND r.freelancer_id = a.freelancer_id
+    WHERE a.freelancer_id = ? AND a.app_status = 'Accepted' AND j.job_status = 'Closed'
+    ORDER BY j.job_id DESC;
+  `;
 
-    // Query to get Job History
-    const jobHistoryQuery = `
-  SELECT 
-    j.title AS job_title, 
-    j.budget, 
-    r.feedback AS review
-  FROM jobs j
-  INNER JOIN applications a ON j.job_id = a.job_id
-  INNER JOIN reviews r ON r.job_id = j.job_id AND r.freelancer_id = a.freelancer_id
-  WHERE 
-    a.freelancer_id = ? 
-    AND a.app_status = 'Accepted' 
-    AND j.job_status = 'Closed'
-  ORDER BY j.job_id DESC;
-`;
+  connection.query(userQuery, [freelancerId], (err, userResult) => {
+    if (err) {
+      console.error("User query error:", err);
+      return res.status(500).send("Error fetching user data");
+    }
+    if (!userResult.length) return res.status(404).send("User not found");
 
-    connection.query(userQuery, [freelancerId], (err, userResult) => {
-        if (err) return res.status(500).send("Error fetching user data");
+    connection.query(freelancerQuery, [freelancerId], (err, freelancerResult) => {
+      if (err) {
+        console.error("Freelancer query error:", err);
+        return res.status(500).send("Error fetching freelancer data");
+      }
+      if (!freelancerResult.length) return res.status(404).send("Freelancer details not found");
 
-        connection.query(freelancerQuery, [freelancerId], (err, freelancerResult) => {
-            if (err) return res.status(500).send("Error fetching freelancer data");
+      connection.query(completedJobsQuery, [freelancerId], (err, completedJobsResult) => {
+        if (err) {
+          console.error("Completed jobs query error:", err);
+          return res.status(500).send("Error fetching completed jobs");
+        }
 
-            connection.query(completedJobsQuery, [freelancerId], (err, completedJobsResult) => {
-                if (err) return res.status(500).send("Error fetching completed jobs");
+        connection.query(totalEarningsQuery, [freelancerId], (err, earningsResult) => {
+          if (err) {
+            console.error("Total earnings query error:", err);
+            return res.status(500).send("Error fetching total earnings");
+          }
 
-                connection.query(totalEarningsQuery, [freelancerId], (err, earningsResult) => {
-                    if (err) return res.status(500).send("Error fetching total earnings");
+          connection.query(averageRatingQuery, [freelancerId], (err, ratingResult) => {
+            if (err) {
+              console.error("Average rating query error:", err);
+              return res.status(500).send("Error fetching average rating");
+            }
 
-                    connection.query(averageRatingQuery, [freelancerId], (err, ratingResult) => {
-                        if (err) return res.status(500).send("Error fetching average rating");
+            connection.query(jobHistoryQuery, [freelancerId], (err, jobHistoryResult) => {
+              if (err) {
+                console.error("Job history query error:", err);
+                return res.status(500).send("Error fetching job history");
+              }
 
-                        connection.query(jobHistoryQuery, [freelancerId], (err, jobHistoryResult) => {
-                            if (err) return res.status(500).send("Error fetching job history");
-                            res.render("freelancer/getProfile.ejs",{user_data:userResult[0], freelancer_data:freelancerResult[0],job_count:completedJobsResult[0],earnings:earningsResult[0],rating:ratingResult[0],jobs_hist:jobHistoryResult});
-                        })
-                    })
-                })
-            })
-        })
-    })
- })
+              res.render("freelancer/getProfile.ejs", {
+                user_data: userResult[0],
+                freelancer_data: freelancerResult[0],
+                job_count: completedJobsResult[0],
+                earnings: earningsResult[0],
+                rating: ratingResult[0],
+                jobs_hist: jobHistoryResult,
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+});
+
 
 //browse freelancers
 app.get("/employer/browse-freelancers",(req,res)=>{
